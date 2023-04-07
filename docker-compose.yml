@@ -3,7 +3,7 @@ services:
   api:
     build:
       context: .
-    container_name: top-api
+    container_name: api
     restart: always
     ports:
       - 3000:3000
