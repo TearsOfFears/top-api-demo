@@ -2,6 +2,7 @@
 /dist
 /mongo-data
 /node_modules
+.env
 
 # Logs
 logs
