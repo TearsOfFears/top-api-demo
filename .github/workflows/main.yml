@@ -1,4 +1,4 @@
-main: Publish Docker
+name: Publish Docker
 
 on:
   push:
