@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { TopPage, TopPageDocument } from './models/top-page.model';
 import { Model, Types } from 'mongoose';
 import { CreateTopPageDto, TopLevelCategory } from './dto/create.dto';
-import { FindTopPageDto } from './dto/find-top-page.dto';
+import { addDays } from 'date-fns';
 
 @Injectable()
 export class TopPageService {
@@ -57,6 +57,17 @@ export class TopPageService {
   ): Promise<TopPageDocument | null> {
     return this.topPageModule
       .findByIdAndUpdate(id, dtoIn, { returnDocument: 'after' })
+      .exec();
+  }
+  async findForRobotaUpdate(date: Date) {
+    return this.topPageModule
+      .find({
+        firstCategory: 0,
+        $or: [
+          { 'robotaUa.updatedAt': { $lt: addDays(date, -1) } },
+          { 'robotaUa.updatedAt': { $exists: false } },
+        ],
+      })
       .exec();
   }
 }

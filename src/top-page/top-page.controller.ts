@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -18,10 +17,14 @@ import { CreateTopPageDto } from './dto/create.dto';
 import { TopPageService } from './top-page.service';
 import { IdValidationPipe } from '../pipes/id-validation.pipe';
 import { TopPageDocument } from './models/top-page.model';
+import { RobotaService } from '../robota/robota.service';
 
 @Controller('topPage')
 export class TopPageController {
-  constructor(private readonly topPageService: TopPageService) {}
+  constructor(
+    private readonly topPageService: TopPageService,
+    private readonly robotaService: RobotaService,
+  ) {}
   @UsePipes(new ValidationPipe())
   @Post('create')
   async create(
@@ -39,6 +42,7 @@ export class TopPageController {
         HttpStatus.EXPECTATION_FAILED,
       );
     }
+
     return topPage;
   }
   @UsePipes(new ValidationPipe())
@@ -46,6 +50,19 @@ export class TopPageController {
   @Get('findByCategory')
   async find(@Body() dtoIn: FindTopPageDto): Promise<TopPageDocument[]> {
     return this.topPageService.findByCategory(dtoIn.firstCategory);
+  }
+  @Post('updatePage')
+  async updatePage() {
+    const updated = await this.robotaService.getData('javascript');
+    console.log('updated--------------', updated);
+    // const pages = await this.topPageService.findForRobotaUpdate(new Date());
+    // for (const page of pages) {
+    //   const cat = page.category;
+    //   const updated = await this.robotaService.getData('javascript');
+    //   console.log('updated--------------', updated);
+    //   // page.robotaUa = updated;
+    //   // await this.topPageService.update(page._id, page);
+    // }
   }
   @Get(':id')
   async get(@Param('id', IdValidationPipe) id): Promise<TopPageDocument> {

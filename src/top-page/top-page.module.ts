@@ -10,5 +10,6 @@ import { TopPage, TopPageSchema } from './models/top-page.model';
   ],
   controllers: [TopPageController],
   providers: [TopPageService],
+  exports: [TopPageService],
 })
 export class TopPageModule {}

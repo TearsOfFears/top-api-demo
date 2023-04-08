@@ -1,6 +1,7 @@
 import { Prop, Schema } from '@nestjs/mongoose';
 import {
   IsArray,
+  IsDate,
   IsEnum,
   IsNumber,
   IsObject,
@@ -16,7 +17,7 @@ export enum TopLevelCategory {
   Books,
   Products,
 }
-export class HhData {
+export class RobotaData {
   @IsNumber()
   count: number;
   @IsNumber()
@@ -25,6 +26,8 @@ export class HhData {
   middleSalary: number;
   @IsNumber()
   seniorSalary: number;
+  @IsDate()
+  updatedAt: Date;
 }
 export class TopPageAdvantages {
   @IsString()
@@ -47,8 +50,9 @@ export class CreateTopPageDto {
   @IsOptional()
   @IsObject()
   @ValidateNested()
-  @Type(() => HhData)
-  hh?: HhData;
+  @Type(() => RobotaData)
+  @Prop(RobotaData)
+  robotaUa?: RobotaData;
   @IsString()
   tagsTitle: string;
   @IsArray()

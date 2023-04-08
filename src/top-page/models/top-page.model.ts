@@ -8,7 +8,7 @@ export enum TopLevelCategory {
   Books,
   Products,
 }
-export class HhData {
+export class RobotaData {
   @Prop()
   count: number;
   @Prop()
@@ -17,6 +17,8 @@ export class HhData {
   middleSalary: number;
   @Prop()
   seniorSalary: number;
+  @Prop()
+  updatedAt: Date;
 }
 export class TopPageAdvantages {
   @Prop()
@@ -36,8 +38,8 @@ export class TopPage {
   alias: string;
   @Prop()
   category: string;
-  @Prop(HhData)
-  hh?: HhData;
+  @Prop(RobotaData)
+  robotaUa?: RobotaData;
   @Prop()
   tagsTitle: string;
   @Prop([TopPageAdvantages])
