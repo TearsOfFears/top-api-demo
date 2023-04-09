@@ -1,16 +1,17 @@
 version: '3'
 services:
   api:
-    build:
-      context: .
+    build: .
     container_name: api
     restart: always
     ports:
       - 3000:3000
     volumes:
       - ./.env:/app/.env
-    depends_on:
+    links:
       - mongo
+    expose:
+      - 3000
   mongo:
     image: mongo:4.4.4
     container_name: mongo

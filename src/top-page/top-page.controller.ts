@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
+  Logger,
   Param,
   Patch,
   Post,
@@ -18,12 +19,14 @@ import { TopPageService } from './top-page.service';
 import { IdValidationPipe } from '../pipes/id-validation.pipe';
 import { TopPageDocument } from './models/top-page.model';
 import { RobotaService } from '../robota/robota.service';
+import { Cron, CronExpression, SchedulerRegistry } from '@nestjs/schedule';
 
 @Controller('topPage')
 export class TopPageController {
   constructor(
     private readonly topPageService: TopPageService,
     private readonly robotaService: RobotaService,
+    private readonly schedulerRegistry: SchedulerRegistry,
   ) {}
   @UsePipes(new ValidationPipe())
   @Post('create')
@@ -51,18 +54,18 @@ export class TopPageController {
   async find(@Body() dtoIn: FindTopPageDto): Promise<TopPageDocument[]> {
     return this.topPageService.findByCategory(dtoIn.firstCategory);
   }
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT, { name: 'UPDATE_PAGES' })
   @Post('updatePage')
   async updatePage() {
-    const updated = await this.robotaService.getData('javascript');
-    console.log('updated--------------', updated);
-    // const pages = await this.topPageService.findForRobotaUpdate(new Date());
-    // for (const page of pages) {
-    //   const cat = page.category;
-    //   const updated = await this.robotaService.getData('javascript');
-    //   console.log('updated--------------', updated);
-    //   // page.robotaUa = updated;
-    //   // await this.topPageService.update(page._id, page);
-    // }
+    const pages = await this.topPageService.findForRobotaUpdate(new Date());
+    const job = this.schedulerRegistry.getCronJob('UPDATE_PAGES');
+    Logger.warn('update', pages);
+
+    for (const page of pages) {
+      const updated = await this.robotaService.getData(page.category);
+      page.robotaUa = updated;
+      await this.topPageService.update(page.id, page);
+    }
   }
   @Get(':id')
   async get(@Param('id', IdValidationPipe) id): Promise<TopPageDocument> {

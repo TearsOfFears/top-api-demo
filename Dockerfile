@@ -4,6 +4,6 @@ ADD package.json package.json
 RUN npm install
 ADD . .
 
-RUN npm run build
-RUN npm prune --production
-CMD ["node","./dist/main.js"]
+EXPOSE 3000
+CMD ["cd", "app"]
+CMD ["npm","run","start:dev"]

@@ -1,9 +1,11 @@
 import { ConfigService } from '@nestjs/config';
 import { MongooseModuleOptions } from '@nestjs/mongoose';
+import { Logger } from '@nestjs/common';
 
 export const getMongoConfig = async (
   configService: ConfigService,
 ): Promise<MongooseModuleOptions> => {
+  Logger.log('getMongoString', getMongoString(configService));
   return {
     uri: getMongoString(configService),
   };

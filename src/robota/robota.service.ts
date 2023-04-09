@@ -3,8 +3,6 @@ import { HttpService } from '@nestjs/axios';
 import { RobotaFindDto } from './dto/robota.dto';
 import { API_ERRORS, USE_CASES } from './robota.constants';
 import { RobotaData } from '../top-page/models/top-page.model';
-import { Observable } from 'rxjs';
-import { AxiosResponse } from 'axios';
 
 @Injectable()
 export class RobotaService {
@@ -12,7 +10,7 @@ export class RobotaService {
 
   async getData(text: string) {
     try {
-      const response = await this.httpService.get<Observable<AxiosResponse>>(
+      const { data } = await this.httpService.axiosRef.get<RobotaFindDto>(
         USE_CASES.search,
         {
           params: {
@@ -21,8 +19,7 @@ export class RobotaService {
           },
         },
       );
-      console.log('response', response);
-      // return this.parseDate(response.data);
+      return this.parseDate(data);
     } catch (e) {
       Logger.error(e);
       throw new HttpException(
@@ -33,8 +30,10 @@ export class RobotaService {
   }
 
   private parseDate(data: RobotaFindDto): RobotaData {
-    const count = data.total;
-    const salaryArray = data.documents.map((el) => el.salaryFrom);
+    const salaryArray = data.documents
+      .map((el) => el.salaryFrom)
+      .filter((salary) => salary !== 0);
+    const count = salaryArray.length;
     const juniorSalary = Math.min(...salaryArray);
     const middleSalary = Math.round(
       salaryArray.reduce((acc, item) => acc + item, 0) / count,

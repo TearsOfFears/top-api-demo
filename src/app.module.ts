@@ -10,6 +10,7 @@ import { FilesModule } from './files/files.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { getTelegramConfig } from './configs/telegram.config';
 import { RobotaModule } from './robota/robota.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -18,17 +19,18 @@ import { RobotaModule } from './robota/robota.module';
       inject: [ConfigService],
       useFactory: getMongoConfig,
     }),
+    TelegramModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: getTelegramConfig,
+    }),
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot(),
     AuthModule,
     TopPageModule,
     ProductModule,
     ReviewModule,
     FilesModule,
-    TelegramModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: getTelegramConfig,
-    }),
     RobotaModule,
   ],
 })
